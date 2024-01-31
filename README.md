@@ -1,6 +1,6 @@
 # NOVA-ORBITAL-PATTERNS 
 
-##Project Guide
+## Project Guide
 This project, taken on with my daughter, has been a delightful journey through various iterations, each bringing its own set of improvements and excitement.
 
 The repository serves as a foundational guide to enhance the existing application by adding features like color strobes, rainbow strobes, sequential rainbow coloration by line, buttons, sliders, and improved modularity for easier variable configuration and user interface navigation.
