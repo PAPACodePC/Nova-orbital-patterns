@@ -1,9 +1,31 @@
 # NOVA-ORBITAL-PATTERNS 
+- This Repo is a work in progress as I try to only work on it with my daughter Nova. She is five and is growing in understanding on some of the "boring" stuff which is giving her the confidence to not be as bored. We will keep growing and iterating over the years.
+- Trav
+
+## Important Safety Information
+**Attention All Users:**
+Before you proceed to use this Orbit Visualizer application, we would like to inform you of certain visual effects incorporated within the software, including strobing and flashing lights. While these effects are designed to enhance the visual experience, they may pose risks to individuals with photosensitive epilepsy or other photo sensitivities.
+
+**Please read the following caution carefully:**
+This application utilizes dynamic visual effects, such as strobing and flashing lights, which can cause discomfort or seizures in individuals with photosensitive epilepsy or similar conditions. If you or someone in your immediate vicinity has a history of epilepsy or experiences symptoms like dizziness, altered vision, eye or face twitching, involuntary movements, or convulsions, please discontinue use immediately and consult a medical professional.
+
+**Viewer Discretion is Advised:**
+- We recommend that all users exercise caution and take breaks regularly to mitigate the risk of discomfort.
+- If you feel dizzy, experience discomfort, or notice any involuntary movements or convulsions, stop using the application immediately and seek medical advice.
+- Parents and guardians should monitor children during the use of this application for any signs of discomfort or adverse reactions.
+
+Your health and safety are of utmost importance to us. By proceeding to use this application, you acknowledge your understanding of this warning and assume all responsibility for any risks that may arise from the use of this software.
+
+Thank you for your attention to this matter, and we hope you enjoy exploring the project.
+
+- Nova & Trav
 
 ## Project Guide
 This project, taken on with my daughter, has been a delightful journey through various iterations, each bringing its own set of improvements and excitement.
 
-The repository serves as a foundational guide to enhance the existing application by adding features like color strobes, rainbow strobes, sequential rainbow coloration by line, buttons, sliders, and improved modularity for easier variable configuration and user interface navigation.
+The repository is to serves as a "functional" guide to enhance the existing application by adding features like color strobes, rainbow strobes, sequential rainbow coloration by line, buttons, sliders, and improved modularity for easier variable configuration and user interface navigation.
+
+It is a work in progress as I try to only work on it with my daughter Nova.
 
 ## Step 1: Clone the Repository
 - Clone the repository from [plusk-dev/orbital-patterns on GitHub](https://github.com/plusk-dev/orbital-patterns).
