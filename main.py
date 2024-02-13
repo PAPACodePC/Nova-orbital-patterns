@@ -1,79 +1,37 @@
-# Import necessary libraries
-import pygame, sys
+# main.py
+import pygame
 import math
+import sys
 import os
 from datetime import datetime
-import colorsys
+from pygame.locals import *
+from ui.buttons import Button
+from utilities.get_rainbow_color import get_rainbow_color
+from planets.planets import update_and_draw_planets, from_centre, planets
 
-# Initialize variables
-planets = {}
-count = 0
-
-# Initialize Pygame and set up screen display
+# Initialize Pygame and set up the screen
 pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Orbit Visualizer")
 
-# Get screen dimensions and set frame rate
-width = screen.get_width()
-height = screen.get_height()
+# Screen dimensions and frame rate setup
+width, height = screen.get_width(), screen.get_height()
 fps = pygame.time.Clock()
 
-counter = 0
-centre = (width//2,height//2)
+# Initialize variables
+centre = (width // 2, height // 2)
 show_axes = False
-
 lines = []
+counter = 0
+count = 0 
 
-strobe_on = False
-strobe_counter = 0
-strobe_rate = 10  # Number of frames to wait before toggling the strobe effect
-
-class Button:
-    def __init__(self, x, y, width, height, text, font_size, color, glow_color):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.text = text
-        self.font_size = font_size
-        self.color = color
-        self.glow_color = glow_color
-        self.active = False
-
-    def render(self, screen):
-        if self.active:
-            color = self.glow_color
-        else:
-            color = self.color
-
-        pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("monospace", self.font_size)
-        text = font.render(self.text, 1, (255, 255, 255))
-        screen.blit(text, (self.x + (self.width // 2 - text.get_width() // 2), self.y + (self.height // 2 - text.get_height() // 2)))
-
-    def is_mouse_over(self, pos):
-        if self.x <= pos[0] <= self.x + self.width and self.y <= pos[1] <= self.y + self.height:
-            return True
-        return False
-    
-# Modify button sizes and positions
+# Define buttons
 button_s = Button(10, 10, 100, 30, "Save (S)", 20, (0, 0, 255), (0, 255, 0))
 button_q = Button(10, 50, 100, 30, "Quit (Q)", 20, (0, 0, 255), (0, 255, 0))
 button_a = Button(10, 90, 100, 30, "Axes (A)", 20, (0, 0, 255), (0, 255, 0))
-button_r = Button(10, 130, 100, 30, "Reset (R)", 20, (0, 0, 255), (0, 255, 0))  # New reset button
-
-# Add the new reset button to the list
+button_r = Button(10, 130, 100, 30, "Reset (R)", 20, (0, 0, 255), (0, 255, 0))
 buttons = [button_s, button_q, button_a, button_r]
 
-# Function to return a rainbow color based on the input value
-def get_rainbow_color(i):
-    hue = i % 360
-    hue /= 360
-    saturation = 1
-    value = 1
-    rgb = colorsys.hsv_to_rgb(hue, saturation, value)
-    return tuple(int(x * 255) for x in rgb)
 
 # Function to calculate the position from the center
 def from_centre(x,y):
@@ -81,36 +39,52 @@ def from_centre(x,y):
 
 # Function to render the visualizer, planets, and lines
 def render():
-    global strobe_on  # Use the global keyword if you're modifying a global variable
-    
-    # Always fill the screen to clear the previous frame
     screen.fill((0, 0, 0))
+    update_and_draw_planets(screen, counter, centre, lines)
+    
+    # Draw planets and their orbits
+    for planet in planets.values():
+        planet["angle"] = planet["angle"] + planet["omega"]
+        planet["x"] = planet["a"] * math.cos(planet["angle"]) # New x
+        planet["y"] = planet["a"] * math.sin(planet["angle"]) # New y
+        pygame.draw.circle(
+            screen,
+            (5, 255, 230),
+            center=from_centre(planet["x"],planet["y"]),
+            radius=5,
+            width=1
+        )
+        pygame.draw.circle(
+            screen,
+            (0, 79, 71),
+            center=centre,
+            radius=planet["a"],
+            width=1
+        )
 
-    # Only draw the planets, orbits, and lines if the strobe effect is 'on'
-    if strobe_on:
-        for planet in planets.values():
-            planet["angle"] = planet["angle"] + planet["omega"]
-            planet["x"] = planet["a"] * math.cos(planet["angle"])  # Calculate new x
-            planet["y"] = planet["a"] * math.sin(planet["angle"])  # Calculate new y
-            
-            # Draw the planet
-            pygame.draw.circle(screen, (5, 255, 230), center=from_centre(planet["x"], planet["y"]), radius=5, width=1)
-            
-            # Draw the orbit
-            pygame.draw.circle(screen, (0, 79, 71), center=centre, radius=planet["a"], width=1)
+    # Draw lines between planets
+    if count > 1:
+        for i in range(1,count):
+            color = get_rainbow_color(counter)
+            pygame.draw.line(
+                screen,
+                color,
+                from_centre(planets[f"{i}"]["x"], planets[f"{i}"]["y"]),
+                from_centre(planets[f"{i+1}"]["x"], planets[f"{i+1}"]["y"])
+            )
 
-        # Draw lines between planets
-        if count > 1:
-            for i in range(1, count):
+        for k in range(1,count):
+            if counter % 6 == 0:
                 color = get_rainbow_color(counter)
-                pygame.draw.line(screen, color, from_centre(planets[f"{i}"]["x"], planets[f"{i}"]["y"]), from_centre(planets[f"{i+1}"]["x"], planets[f"{i+1}"]["y"]))
-            
-            for j in lines:
-                pygame.draw.line(screen, j[2], j[0], j[1])
+                lines.append(
+                    (from_centre(planets[f"{k}"]["x"], planets[f"{k}"]["y"]),
+                     from_centre(planets[f"{k+1}"]["x"], planets[f"{k+1}"]["y"]),
+                     color)
+                )
 
-        # Axes and other elements could be drawn outside of the strobe effect condition
-        # if they should always be visible, or inside if they should also blink with the strobe effect.
-
+    # Draw previously stored lines
+    for j in lines:
+        pygame.draw.line(screen, j[2], j[0], j[1])
 
     # Draw axes and circles around mouse pointer
     if show_axes == True:
@@ -172,9 +146,8 @@ def render():
 
 # Main loop to handle events and update the screen
 while True:
-    counter += 1
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_q]:
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
@@ -184,9 +157,6 @@ while True:
                 pygame.image.save(screen, f"images/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.png")
             if event.key == pygame.K_a:
                 show_axes = not show_axes
-            if event.key == pygame.K_t:  # Assuming 't' is for 'toggle strobe'
-                strobe_on = not strobe_on  # This line directly toggles the strobe effect on/off.
-                strobe_counter = 0  # Optionally reset the counter to start the effect immediately
 
         # Handle mouse events for buttons and planets
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -224,11 +194,6 @@ while True:
     mouse_pos = pygame.mouse.get_pos()
     for button in buttons:
         button.active = button.is_mouse_over(mouse_pos)
-    strobe_counter += 1
-
-    if strobe_counter >= strobe_rate:
-        strobe_on = not strobe_on  # Toggle the strobe effect
-        strobe_counter = 0  # Reset the counter
 
     render()
     pygame.display.update()
