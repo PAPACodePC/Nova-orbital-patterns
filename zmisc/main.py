@@ -25,6 +25,10 @@ show_axes = False
 
 lines = []
 
+strobe_on = False
+strobe_counter = 0
+strobe_rate = 10  # Number of frames to wait before toggling the strobe effect
+
 class Button:
     def __init__(self, x, y, width, height, text, font_size, color, glow_color):
         self.x = x
@@ -77,51 +81,36 @@ def from_centre(x,y):
 
 # Function to render the visualizer, planets, and lines
 def render():
-    screen.fill((0, 0, 0))
+    global strobe_on  # Use the global keyword if you're modifying a global variable
     
-    # Draw planets and their orbits
-    for planet in planets.values():
-        planet["angle"] = planet["angle"] + planet["omega"]
-        planet["x"] = planet["a"] * math.cos(planet["angle"]) # New x
-        planet["y"] = planet["a"] * math.sin(planet["angle"]) # New y
-        pygame.draw.circle(
-            screen,
-            (5, 255, 230),
-            center=from_centre(planet["x"],planet["y"]),
-            radius=5,
-            width=1
-        )
-        pygame.draw.circle(
-            screen,
-            (0, 79, 71),
-            center=centre,
-            radius=planet["a"],
-            width=1
-        )
+    # Always fill the screen to clear the previous frame
+    screen.fill((0, 0, 0))
 
-    # Draw lines between planets
-    if count > 1:
-        for i in range(1,count):
-            color = get_rainbow_color(counter)
-            pygame.draw.line(
-                screen,
-                color,
-                from_centre(planets[f"{i}"]["x"], planets[f"{i}"]["y"]),
-                from_centre(planets[f"{i+1}"]["x"], planets[f"{i+1}"]["y"])
-            )
+    # Only draw the planets, orbits, and lines if the strobe effect is 'on'
+    if strobe_on:
+        for planet in planets.values():
+            planet["angle"] = planet["angle"] + planet["omega"]
+            planet["x"] = planet["a"] * math.cos(planet["angle"])  # Calculate new x
+            planet["y"] = planet["a"] * math.sin(planet["angle"])  # Calculate new y
+            
+            # Draw the planet
+            pygame.draw.circle(screen, (5, 255, 230), center=from_centre(planet["x"], planet["y"]), radius=5, width=1)
+            
+            # Draw the orbit
+            pygame.draw.circle(screen, (0, 79, 71), center=centre, radius=planet["a"], width=1)
 
-        for k in range(1,count):
-            if counter % 6 == 0:
+        # Draw lines between planets
+        if count > 1:
+            for i in range(1, count):
                 color = get_rainbow_color(counter)
-                lines.append(
-                    (from_centre(planets[f"{k}"]["x"], planets[f"{k}"]["y"]),
-                     from_centre(planets[f"{k+1}"]["x"], planets[f"{k+1}"]["y"]),
-                     color)
-                )
+                pygame.draw.line(screen, color, from_centre(planets[f"{i}"]["x"], planets[f"{i}"]["y"]), from_centre(planets[f"{i+1}"]["x"], planets[f"{i+1}"]["y"]))
+            
+            for j in lines:
+                pygame.draw.line(screen, j[2], j[0], j[1])
 
-    # Draw previously stored lines
-    for j in lines:
-        pygame.draw.line(screen, j[2], j[0], j[1])
+        # Axes and other elements could be drawn outside of the strobe effect condition
+        # if they should always be visible, or inside if they should also blink with the strobe effect.
+
 
     # Draw axes and circles around mouse pointer
     if show_axes == True:
@@ -195,6 +184,9 @@ while True:
                 pygame.image.save(screen, f"images/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.png")
             if event.key == pygame.K_a:
                 show_axes = not show_axes
+            if event.key == pygame.K_t:  # Assuming 't' is for 'toggle strobe'
+                strobe_on = not strobe_on  # This line directly toggles the strobe effect on/off.
+                strobe_counter = 0  # Optionally reset the counter to start the effect immediately
 
         # Handle mouse events for buttons and planets
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -232,6 +224,11 @@ while True:
     mouse_pos = pygame.mouse.get_pos()
     for button in buttons:
         button.active = button.is_mouse_over(mouse_pos)
+    strobe_counter += 1
+
+    if strobe_counter >= strobe_rate:
+        strobe_on = not strobe_on  # Toggle the strobe effect
+        strobe_counter = 0  # Reset the counter
 
     render()
     pygame.display.update()
