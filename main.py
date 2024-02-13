@@ -23,11 +23,7 @@ centre = (width // 2, height // 2)
 show_axes = False
 lines = []
 counter = 0
-<<<<<<< Updated upstream
-count = 0 
-=======
-count = 0  # Add this line to initialize count
->>>>>>> Stashed changes
+count = 0
 
 # Define buttons
 button_s = Button(10, 10, 100, 30, "Save (S)", 20, (0, 0, 255), (0, 255, 0))
