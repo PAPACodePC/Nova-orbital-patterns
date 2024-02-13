@@ -1,10 +1,19 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+
+# CPython cache directory
 .Python
+
+# Virtual environments
 env/
 venv/
+
+# IDE directories
 .idea/
 .vscode/
+
+# Swap files
 *.swp
