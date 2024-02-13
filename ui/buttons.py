@@ -1,3 +1,4 @@
+# buttons.py
 import pygame
 
 class Button:
@@ -27,14 +28,4 @@ class Button:
         if self.x <= pos[0] <= self.x + self.width and self.y <= pos[1] <= self.y + self.height:
             return True
         return False
-    
-# Modify button sizes and positions
-button_s = Button(10, 10, 100, 30, "Save (S)", 20, (0, 0, 255), (0, 255, 0))
-button_q = Button(10, 50, 100, 30, "Quit (Q)", 20, (0, 0, 255), (0, 255, 0))
-button_a = Button(10, 90, 100, 30, "Axes (A)", 20, (0, 0, 255), (0, 255, 0))
-button_r = Button(10, 130, 100, 30, "Reset (R)", 20, (0, 0, 255), (0, 255, 0))  # New reset button
-
-# Add the new reset button to the list
-buttons = [button_s, button_q, button_a, button_r]
-
     

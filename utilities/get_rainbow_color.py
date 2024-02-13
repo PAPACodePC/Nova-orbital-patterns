@@ -1,3 +1,4 @@
+# get_rainbow_color.py
 import colorsys
 
 # Function to return a rainbow color based on the input value

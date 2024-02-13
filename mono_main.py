@@ -1,75 +1,37 @@
-# Import necessary libraries
-import pygame, sys
+# main.py
+import pygame
 import math
+import sys
 import os
 from datetime import datetime
-import colorsys
+from pygame.locals import *
+from ui.buttons import Button
+from utilities.get_rainbow_color import get_rainbow_color
+from planets.planets import update_and_draw_planets, from_centre, planets
 
-# Initialize variables
-planets = {}
-count = 0
-
-# Initialize Pygame and set up screen display
+# Initialize Pygame and set up the screen
 pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Orbit Visualizer")
 
-# Get screen dimensions and set frame rate
-width = screen.get_width()
-height = screen.get_height()
+# Screen dimensions and frame rate setup
+width, height = screen.get_width(), screen.get_height()
 fps = pygame.time.Clock()
 
-counter = 0
-centre = (width//2,height//2)
+# Initialize variables
+centre = (width // 2, height // 2)
 show_axes = False
-
 lines = []
+counter = 0
+count = 0  # Add this line to initialize count
 
-class Button:
-    def __init__(self, x, y, width, height, text, font_size, color, glow_color):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.text = text
-        self.font_size = font_size
-        self.color = color
-        self.glow_color = glow_color
-        self.active = False
-
-    def render(self, screen):
-        if self.active:
-            color = self.glow_color
-        else:
-            color = self.color
-
-        pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("monospace", self.font_size)
-        text = font.render(self.text, 1, (255, 255, 255))
-        screen.blit(text, (self.x + (self.width // 2 - text.get_width() // 2), self.y + (self.height // 2 - text.get_height() // 2)))
-
-    def is_mouse_over(self, pos):
-        if self.x <= pos[0] <= self.x + self.width and self.y <= pos[1] <= self.y + self.height:
-            return True
-        return False
-    
-# Modify button sizes and positions
+# Define buttons
 button_s = Button(10, 10, 100, 30, "Save (S)", 20, (0, 0, 255), (0, 255, 0))
 button_q = Button(10, 50, 100, 30, "Quit (Q)", 20, (0, 0, 255), (0, 255, 0))
 button_a = Button(10, 90, 100, 30, "Axes (A)", 20, (0, 0, 255), (0, 255, 0))
-button_r = Button(10, 130, 100, 30, "Reset (R)", 20, (0, 0, 255), (0, 255, 0))  # New reset button
-
-# Add the new reset button to the list
+button_r = Button(10, 130, 100, 30, "Reset (R)", 20, (0, 0, 255), (0, 255, 0))
 buttons = [button_s, button_q, button_a, button_r]
 
-# Function to return a rainbow color based on the input value
-def get_rainbow_color(i):
-    hue = i % 360
-    hue /= 360
-    saturation = 1
-    value = 1
-    rgb = colorsys.hsv_to_rgb(hue, saturation, value)
-    return tuple(int(x * 255) for x in rgb)
 
 # Function to calculate the position from the center
 def from_centre(x,y):
@@ -78,6 +40,7 @@ def from_centre(x,y):
 # Function to render the visualizer, planets, and lines
 def render():
     screen.fill((0, 0, 0))
+    update_and_draw_planets(screen, counter, centre, lines)
     
     # Draw planets and their orbits
     for planet in planets.values():
@@ -183,9 +146,8 @@ def render():
 
 # Main loop to handle events and update the screen
 while True:
-    counter += 1
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_q]:
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
