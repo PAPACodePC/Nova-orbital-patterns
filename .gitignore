@@ -16,4 +16,3 @@ ENV/
 *.log
 *.vsix
 *.nupkg
-main_rainbow.py
