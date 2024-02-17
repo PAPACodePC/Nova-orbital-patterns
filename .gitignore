@@ -1,19 +1,19 @@
-# Byte-compiled / optimized / DLL files
+__pycache__
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-
-# CPython cache directory
 .Python
-
-# Virtual environments
 env/
 venv/
-
-# IDE directories
+ENV/
 .idea/
 .vscode/
-
-# Swap files
 *.swp
+*.bak
+*.tmp
+*.out
+*.log
+*.vsix
+*.nupkg
+main_rainbow.py
